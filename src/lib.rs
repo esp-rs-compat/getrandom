@@ -28,6 +28,7 @@
 //! | L4RE, SGX, UEFI  | [RDRAND][18]
 //! | Hermit           | [RDRAND][18] as [`sys_rand`][22] is currently broken.
 //! | VxWorks          | `randABytes` after checking entropy pool initialization with `randSecure`
+//! | ESP-IDF           | `*‑espidf`         | [`getrandom()`][23]
 //! | Web browsers     | [`Crypto.getRandomValues`][14] (see [Support for WebAssembly and asm.js][16])
 //! | Node.js          | [`crypto.randomBytes`][15] (see [Support for WebAssembly and asm.js][16])
 //! | WASI             | [`__wasi_random_get`][17]
@@ -238,6 +239,8 @@ cfg_if! {
     } else if #[cfg(target_os = "vxworks")] {
         mod util_libc;
         #[path = "vxworks.rs"] mod imp;
+    } else if #[cfg(target_os = "espidf")] {
+        #[path = "espidf.rs"] mod imp;
     } else if #[cfg(all(windows, getrandom_uwp))] {
         #[path = "windows_uwp.rs"] mod imp;
     } else if #[cfg(windows)] {
